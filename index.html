@@ -22,6 +22,8 @@
 }
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--navy-deep);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+html{overflow-x:hidden}
+html,body{max-width:100vw}
 h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;font-weight:700;line-height:1.1}
 img{max-width:100%;display:block}a{text-decoration:none;color:inherit}
 
@@ -468,11 +470,12 @@ img{max-width:100%;display:block}a{text-decoration:none;color:inherit}
 .footer-cta:hover{background:var(--orange);color:#fff;border-color:var(--orange)}
 .footer-cta svg{width:14px;height:14px}
 
-.footer-cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.footer-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.footer-col-full{grid-column:1/-1}
 
 .footer-col h4{font-family:'Outfit';font-weight:700;font-size:11px;color:var(--orange);margin-bottom:16px;letter-spacing:1.5px;text-transform:uppercase}
 
-.footer-col a{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.35);margin-bottom:11px;transition:color .25s,transform .25s}
+.footer-col a{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.35);margin-bottom:11px;transition:color .25s,transform .25s;word-break:break-all}
 .footer-col a:hover{color:#fff;transform:translateX(3px)}
 
 /* Contact icons */
@@ -1038,16 +1041,16 @@ img{max-width:100%;display:block}a{text-decoration:none;color:inherit}
           <a href="#diensten">Dakgoot</a>
         </div>
         <div class="footer-col">
-          <h4>Contact</h4>
-          <a href="tel:+31617835171"><svg class="fi" viewBox="0 0 16 16" fill="none"><path d="M6.6 9.4c1 1.8 2.6 3.4 4.4 4.4l1.4-1.4c.2-.2.4-.2.6-.1.7.2 1.4.4 2.2.4.3 0 .6.3.6.6v2c0 .3-.3.6-.6.6C7 16 0 9 0 .8 0 .5.3.2.6.2h2c.3 0 .6.3.6.6 0 .8.1 1.5.4 2.2.1.2 0 .4-.1.6L2 5" stroke="currentColor" stroke-width="1.2"/></svg>+31 6 17835171</a>
-          <a href="mailto:info@veenstratotaalonderhoud.nl"><svg class="fi" viewBox="0 0 16 16" fill="none"><rect x="1" y="3.5" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M1 5l7 4.5L15 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>info@veenstratotaalonderhoud.nl</a>
-          <a href="https://wa.me/31617835171" target="_blank"><svg class="fi" viewBox="0 0 16 16" fill="none"><path d="M8 1C4.1 1 1 4.1 1 8c0 1.3.3 2.5 1 3.5L1 15l3.6-1c1 .6 2.1.9 3.4.9 3.9 0 7-3.1 7-7s-3.1-7-7-7z" stroke="currentColor" stroke-width="1.2"/></svg>WhatsApp</a>
-        </div>
-        <div class="footer-col">
           <h4>Openingstijden</h4>
           <div class="footer-time"><span class="footer-time-dot open"></span>Ma - Vr: 8:15 - 17:00</div>
           <div class="footer-time"><span class="footer-time-dot open"></span>Za: 10:00 - 15:00</div>
           <div class="footer-time"><span class="footer-time-dot closed"></span>Zo: Gesloten</div>
+        </div>
+        <div class="footer-col footer-col-full">
+          <h4>Contact</h4>
+          <a href="tel:+31617835171"><svg class="fi" viewBox="0 0 16 16" fill="none"><path d="M6.6 9.4c1 1.8 2.6 3.4 4.4 4.4l1.4-1.4c.2-.2.4-.2.6-.1.7.2 1.4.4 2.2.4.3 0 .6.3.6.6v2c0 .3-.3.6-.6.6C7 16 0 9 0 .8 0 .5.3.2.6.2h2c.3 0 .6.3.6.6 0 .8.1 1.5.4 2.2.1.2 0 .4-.1.6L2 5" stroke="currentColor" stroke-width="1.2"/></svg>+31 6 17835171</a>
+          <a href="mailto:info@veenstratotaalonderhoud.nl"><svg class="fi" viewBox="0 0 16 16" fill="none"><rect x="1" y="3.5" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M1 5l7 4.5L15 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>info@veenstratotaalonderhoud.nl</a>
+          <a href="https://wa.me/31617835171" target="_blank"><svg class="fi" viewBox="0 0 16 16" fill="none"><path d="M8 1C4.1 1 1 4.1 1 8c0 1.3.3 2.5 1 3.5L1 15l3.6-1c1 .6 2.1.9 3.4.9 3.9 0 7-3.1 7-7s-3.1-7-7-7z" stroke="currentColor" stroke-width="1.2"/></svg>WhatsApp</a>
         </div>
       </div>
     </div>

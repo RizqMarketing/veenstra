@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veenstra Totaalonderhoud — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ===========================
+     RESET & BASE
+  =========================== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --orange: #F5A623;
+    --orange-light: #FFECC8;
+    --orange-dark: #D4891A;
+    --navy: #1B3B6B;
+    --navy-deep: #0E1F3D;
+    --navy-mid: #243F6E;
+    --bg: #F8F6F3;
+    --white: #FFFFFF;
+    --text: #1A1A2E;
+    --text-muted: #6B7280;
+    --text-light: #9CA3AF;
+    --border: #E5E0D8;
+    --border-light: #F0EDE8;
+    --green: #10B981;
+    --green-light: #D1FAE5;
+    --red: #EF4444;
+    --red-light: #FEE2E2;
+    --blue: #3B82F6;
+    --blue-light: #DBEAFE;
+    --purple: #8B5CF6;
+    --purple-light: #EDE9FE;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+    --shadow-xl: 0 20px 60px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.1);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-lg: 16px;
+    --sidebar-w: 260px;
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4, h5 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
+
+  /* ===========================
+     LOGIN SCREEN
+  =========================== */
+  #loginScreen {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, var(--navy-deep) 0%, #152850 50%, #0a1628 100%);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #loginScreen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+  .login-bg-pattern {
+    position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  }
+  .login-bg-pattern::before {
+    content: '';
+    position: absolute; top: -30%; right: -20%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(245,166,35,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .login-bg-pattern::after {
+    content: '';
+    position: absolute; bottom: -20%; left: -10%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(27,59,107,0.4) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .login-dots {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  .login-card {
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 48px 44px;
+    width: 100%; max-width: 420px;
+    position: relative; z-index: 1;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06) inset;
+  }
+
+  .login-logo {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 36px; justify-content: center;
+  }
+  .login-logo-icon {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--orange) 0%, var(--orange-dark) 100%);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(245,166,35,0.4);
+    position: relative; overflow: hidden;
+  }
+  .login-logo-icon::after {
+    content: '';
+    position: absolute; top: 2px; left: 2px; right: 2px; height: 40%;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px 10px 0 0;
+  }
+  .login-logo-icon svg { position: relative; z-index: 1; }
+  .login-logo-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 26px; font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .login-logo-text span { color: var(--orange); }
+
+  .login-tagline {
+    text-align: center;
+    color: rgba(255,255,255,0.45);
+    font-size: 13px; font-weight: 400;
+    margin-top: -24px; margin-bottom: 36px;
+    letter-spacing: 0.3px;
+  }
+
+  .login-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 22px; font-weight: 600;
+    color: #fff; text-align: center;
+    margin-bottom: 8px;
+  }
+  .login-subtitle {
+    font-size: 13px; color: rgba(255,255,255,0.4);
+    text-align: center; margin-bottom: 32px;
+  }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block; font-size: 12px; font-weight: 500;
+    color: rgba(255,255,255,0.55); margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .form-input {
+    width: 100%; padding: 14px 18px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-sm);
+    color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px;
+    transition: var(--transition); outline: none;
+  }
+  .form-input::placeholder { color: rgba(255,255,255,0.25); }
+  .form-input:focus {
+    border-color: var(--orange);
+    background: rgba(255,255,255,0.09);
+    box-shadow: 0 0 0 3px rgba(245,166,35,0.15);
+  }
+
+  .login-remember {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .remember-check {
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; color: rgba(255,255,255,0.45); font-size: 13px;
+  }
+  .remember-check input { accent-color: var(--orange); }
+  .forgot-link {
+    font-size: 13px; color: var(--orange);
+    text-decoration: none; opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .forgot-link:hover { opacity: 1; }
+
+  .btn-login {
+    width: 100%; padding: 15px;
+    background: linear-gradient(135deg, var(--orange) 0%, var(--orange-dark) 100%);
+    border: none; border-radius: var(--radius-sm);
+    color: #fff; font-family: 'Outfit', sans-serif;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; letter-spacing: 0.3px;
+    transition: var(--transition);
+    box-shadow: 0 8px 24px rgba(245,166,35,0.35);
+    position: relative; overflow: hidden;
+  }
+  .btn-login::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .btn-login:hover { transform: translateY(-1px); box-shadow: 0 12px 32px rgba(245,166,35,0.45); }
+  .btn-login:hover::after { opacity: 1; }
+  .btn-login:active { transform: translateY(0); }
+
+  .login-footer {
+    text-align: center; margin-top: 24px;
+    font-size: 12px; color: rgba(255,255,255,0.2);
+  }
+
+  /* ===========================
+     DASHBOARD WRAPPER
+  =========================== */
+  #dashboardApp {
+    display: flex; min-height: 100vh;
+    opacity: 0; transition: opacity 0.6s ease;
+  }
+  #dashboardApp.visible { opacity: 1; }
+
+  /* ===========================
+     SIDEBAR
+  =========================== */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: linear-gradient(180deg, var(--navy-deep) 0%, #132040 100%);
+    position: fixed; top: 0; left: 0; bottom: 0;
+    display: flex; flex-direction: column;
+    z-index: 100;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.2);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    overflow: hidden;
+  }
+  .sidebar::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 1px; height: 100%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+  }
+  .sidebar-glow {
+    position: absolute; top: -80px; left: -80px;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; gap: 12px;
+    position: relative;
+  }
+  .logo-icon {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--orange) 0%, var(--orange-dark) 100%);
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(245,166,35,0.35);
+    position: relative; overflow: hidden;
+  }
+  .logo-icon::after {
+    content: '';
+    position: absolute; top: 1px; left: 1px; right: 1px; height: 45%;
+    background: rgba(255,255,255,0.18);
+    border-radius: 9px 9px 0 0;
+  }
+  .logo-icon svg { position: relative; z-index: 1; }
+  .logo-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px; font-weight: 700;
+    color: #fff; letter-spacing: -0.3px;
+  }
+  .logo-text span { color: var(--orange); }
+  .logo-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px; font-weight: 400;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1.2px; text-transform: uppercase;
+    margin-top: -2px;
+  }
+
+  .sidebar-nav {
+    flex: 1; padding: 20px 14px;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .sidebar-nav::-webkit-scrollbar { display: none; }
+
+  .nav-section-label {
+    font-size: 10px; font-weight: 600;
+    color: rgba(255,255,255,0.2);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 0 10px; margin-bottom: 8px; margin-top: 20px;
+  }
+  .nav-section-label:first-child { margin-top: 0; }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: var(--transition);
+    color: rgba(255,255,255,0.5);
+    font-size: 13.5px; font-weight: 500;
+    margin-bottom: 3px;
+    position: relative;
+    user-select: none;
+  }
+  .nav-item:hover {
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.85);
+  }
+  .nav-item.active {
+    background: linear-gradient(135deg, rgba(245,166,35,0.18) 0%, rgba(245,166,35,0.08) 100%);
+    color: var(--orange);
+    border: 1px solid rgba(245,166,35,0.2);
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute; left: -14px; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 22px;
+    background: var(--orange);
+    border-radius: 0 3px 3px 0;
+  }
+  .nav-icon {
+    width: 20px; height: 20px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--orange);
+    color: #fff;
+    font-size: 10px; font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    min-width: 20px; text-align: center;
+  }
+
+  .sidebar-footer {
+    padding: 20px 14px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .user-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer; transition: var(--transition);
+  }
+  .user-card:hover { background: rgba(255,255,255,0.08); }
+  .user-avatar {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--orange) 0%, var(--orange-dark) 100%);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .user-info { flex: 1; min-width: 0; }
+  .user-name {
+    font-size: 12.5px; font-weight: 600; color: #fff;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .user-role { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+  /* ===========================
+     MAIN CONTENT
+  =========================== */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+    box-shadow: var(--shadow-sm);
+  }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .topbar-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px; font-weight: 600; color: var(--text);
+  }
+  .topbar-breadcrumb {
+    font-size: 12px; color: var(--text-muted);
+    display: flex; align-items: center; gap: 6px; margin-top: 1px;
+  }
+  .breadcrumb-sep { opacity: 0.4; }
+
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .topbar-search {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 14px;
+    transition: var(--transition);
+  }
+  .topbar-search:focus-within {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px rgba(245,166,35,0.1);
+  }
+  .topbar-search input {
+    border: none; background: none; outline: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--text); width: 160px;
+  }
+  .topbar-search input::placeholder { color: var(--text-light); }
+  .topbar-search svg { color: var(--text-light); flex-shrink: 0; }
+
+  .icon-btn {
+    width: 38px; height: 38px;
+    border-radius: 8px; border: 1px solid var(--border);
+    background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: var(--transition); color: var(--text-muted);
+    position: relative;
+  }
+  .icon-btn:hover { background: var(--bg); color: var(--text); border-color: var(--orange); }
+  .icon-btn .badge {
+    position: absolute; top: -4px; right: -4px;
+    width: 16px; height: 16px;
+    background: var(--orange); border-radius: 50%;
+    font-size: 9px; font-weight: 700; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--white);
+  }
+
+  .topbar-avatar {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--orange) 0%, var(--orange-dark) 100%);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: #fff;
+    cursor: pointer; box-shadow: 0 2px 8px rgba(245,166,35,0.3);
+    flex-shrink: 0;
+  }
+
+  /* PAGE CONTENT */
+  .page-content {
+    padding: 32px;
+    flex: 1;
+    display: none;
+  }
+  .page-content.active { display: block; }
+
+  /* ===========================
+     SECTIONS
+  =========================== */
+  .section-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 22px; flex-wrap: wrap; gap: 12px;
+  }
+  .section-header .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .section-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px; font-weight: 700; color: var(--text);
+  }
+  .section-subtitle {
+    font-size: 12.5px; color: var(--text-muted); margin-top: 2px;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px;
+    border-radius: 8px; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: var(--transition);
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--orange) 0%, var(--orange-dark) 100%);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(245,166,35,0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(245,166,35,0.4);
+  }
+  .btn-secondary {
+    background: var(--white); color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--bg); border-color: var(--orange); }
+
+  /* ===========================
+     STAT CARDS
+  =========================== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    position: relative; overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .stat-card:nth-child(1)::before { background: linear-gradient(90deg, var(--blue), #60A5FA); }
+  .stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--orange), #FCD34D); }
+  .stat-card:nth-child(3)::before { background: linear-gradient(90deg, var(--green), #34D399); }
+  .stat-card:nth-child(4)::before { background: linear-gradient(90deg, var(--purple), #A78BFA); }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .stat-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .stat-icon-wrap {
+    width: 46px; height: 46px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .stat-icon-wrap.blue { background: var(--blue-light); color: var(--blue); }
+  .stat-icon-wrap.orange { background: var(--orange-light); color: var(--orange-dark); }
+  .stat-icon-wrap.green { background: var(--green-light); color: var(--green); }
+  .stat-icon-wrap.purple { background: var(--purple-light); color: var(--purple); }
+
+  .stat-change {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 12px; font-weight: 600;
+    padding: 4px 9px; border-radius: 20px;
+  }
+  .stat-change.up { background: var(--green-light); color: var(--green); }
+  .stat-change.down { background: var(--red-light); color: var(--red); }
+
+  .stat-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 32px; font-weight: 700; color: var(--text);
+    letter-spacing: -0.5px; line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 12.5px; color: var(--text-muted); font-weight: 400;
+  }
+  .stat-period {
+    font-size: 11px; color: var(--text-light);
+    margin-top: 3px;
+  }
+
+  /* ===========================
+     TABLE
+  =========================== */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 22px 24px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px; font-weight: 700; color: var(--text);
+  }
+  .card-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .card-body { padding: 20px 24px; }
+
+  .table-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px; border-bottom: 1px solid var(--border-light);
+  }
+  .search-input-wrap {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 9px 14px;
+    transition: var(--transition); flex: 1; max-width: 300px;
+  }
+  .search-input-wrap:focus-within { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(245,166,35,0.1); }
+  .search-input-wrap input {
+    border: none; background: none; outline: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text); flex: 1;
+  }
+  .search-input-wrap input::placeholder { color: var(--text-light); }
+  .search-input-wrap svg { color: var(--text-light); flex-shrink: 0; }
+  .table-actions { display: flex; gap: 8px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left; padding: 11px 20px;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px;
+    background: var(--bg); border-bottom: 1px solid var(--border-light);
+    white-space: nowrap;
+  }
+  tbody tr {
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--border-light);
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(245,166,35,0.03); }
+  td {
+    padding: 14px 20px;
+    font-size: 13.5px; color: var(--text);
+    vertical-align: middle;
+  }
+  .td-name {
+    font-weight: 600; color: var(--text);
+  }
+  .td-phone { color: var(--text-muted); font-size: 13px; }
+  .td-service { color: var(--text-muted); font-size: 13px; }
+
+  /* STATUS BADGES */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 11.5px; font-weight: 600; white-space: nowrap;
+  }
+  .badge-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .badge.nieuw { background: var(--blue-light); color: var(--blue); }
+  .badge.nieuw .badge-dot { background: var(--blue); }
+  .badge.gebeld { background: var(--orange-light); color: var(--orange-dark); }
+  .badge.gebeld .badge-dot { background: var(--orange-dark); }
+  .badge.offerte { background: var(--purple-light); color: var(--purple); }
+  .badge.offerte .badge-dot { background: var(--purple); }
+  .badge.akkoord { background: var(--green-light); color: var(--green); }
+  .badge.akkoord .badge-dot { background: var(--green); }
+  .badge.ingepland { background: #DBEEFF; color: var(--navy); }
+  .badge.ingepland .badge-dot { background: var(--navy); }
+  .badge.actief { background: var(--green-light); color: var(--green); }
+  .badge.actief .badge-dot { background: var(--green); }
+  .badge.afgerond { background: var(--border-light); color: var(--text-muted); }
+  .badge.afgerond .badge-dot { background: var(--text-muted); }
+
+  .action-btn {
+    width: 30px; height: 30px;
+    border-radius: 6px; border: 1px solid var(--border);
+    background: var(--white); color: var(--text-muted);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: var(--transition);
+  }
+  .action-btn:hover { background: var(--bg); color: var(--orange); border-color: var(--orange); }
+  .action-btns { display: flex; gap: 4px; }
+
+  /* ===========================
+     PLANNING
+  =========================== */
+  .planning-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .weather-row {
+    background: linear-gradient(135deg, #1B3B6B 0%, #243F6E 100%);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 20px; overflow: hidden; position: relative;
+  }
+  .weather-row::before {
+    content: '';
+    position: absolute; top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+  .weather-day {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+    position: relative; z-index: 1;
+  }
+  .weather-day + .weather-day {
+    border-left: 1px solid rgba(255,255,255,0.1);
+  }
+  .weather-day-name { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.8px; }
+  .weather-icon { font-size: 24px; }
+  .weather-temp {
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px; font-weight: 700; color: #fff;
+  }
+  .weather-desc { font-size: 10.5px; color: rgba(255,255,255,0.4); }
+
+  .week-calendar { background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); overflow: hidden; }
+  .week-inner { min-width: 0; }
+  .week-header {
+    display: grid; grid-template-columns: 36px repeat(5, 1fr);
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg);
+  }
+  .week-header-cell {
+    padding: 10px 4px; text-align: center;
+    font-size: 9px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .week-header-cell .day-num {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px; font-weight: 700; color: var(--text);
+    display: block; margin-bottom: 1px;
+  }
+  .week-header-cell.today .day-num {
+    background: var(--orange);
+    color: #fff; width: 26px; height: 26px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1px; font-size: 13px;
+  }
+  .week-body { padding: 8px; }
+  .week-slot {
+    display: flex; align-items: stretch; gap: 4px;
+    margin-bottom: 4px; min-height: 44px;
+  }
+  .week-time {
+    width: 30px; font-size: 9px; color: var(--text-light);
+    padding-top: 4px; flex-shrink: 0; text-align: right;
+  }
+  .week-days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; flex: 1; }
+
+  @media(min-width:768px){
+    .week-header{grid-template-columns:54px repeat(5,1fr)}
+    .week-header-cell{padding:14px 8px;font-size:11px}
+    .week-header-cell .day-num{font-size:20px}
+    .week-header-cell.today .day-num{width:32px;height:32px;font-size:15px}
+    .week-body{padding:16px}
+    .week-slot{gap:6px;margin-bottom:8px;min-height:52px}
+    .week-time{width:44px;font-size:11px}
+    .week-days{gap:6px}
+  }
+
+  .appt {
+    border-radius: 6px; padding: 4px 6px;
+    font-size: 9px; font-weight: 500;
+    transition: var(--transition); cursor: pointer;
+    position: relative; overflow: hidden;
+    border-left: 2px solid transparent;
+  }
+  .appt:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+  .appt-name { font-weight: 600; font-size: 9px; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .appt-type { font-size: 8px; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  @media(min-width:768px){
+    .appt{border-radius:8px;padding:8px 10px;font-size:11.5px;border-left-width:3px}
+    .appt-name{font-size:12px;margin-bottom:2px}
+    .appt-type{font-size:10.5px}
+  }
+  .appt.orange { background: rgba(245,166,35,0.1); border-color: var(--orange); color: #92620a; }
+  .appt.blue { background: var(--blue-light); border-color: var(--blue); color: #1e40af; }
+  .appt.green { background: var(--green-light); border-color: var(--green); color: #065f46; }
+  .appt.navy { background: #DBEEFF; border-color: var(--navy); color: var(--navy); }
+  .appt.purple { background: var(--purple-light); border-color: var(--purple); color: #5b21b6; }
+  .appt.empty { background: transparent; border-color: transparent; cursor: default; }
+
+  /* ===========================
+     CLIENTS / KLANTBEHEER
+  =========================== */
+  .clients-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .client-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    padding: 22px;
+    transition: var(--transition);
+    position: relative; overflow: hidden;
+  }
+  .client-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--orange), var(--orange-dark));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: left;
+  }
+  .client-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .client-card:hover::after { transform: scaleX(1); }
+
+  .client-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+  .client-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .client-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;
+  }
+  .client-address, .client-project {
+    font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px;
+  }
+  .client-meta { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
+  .client-date { font-size: 11px; color: var(--text-light); }
+
+  /* ===========================
+     FINANCIEEL
+  =========================== */
+  .finance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .finance-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .fin-stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: var(--transition);
+  }
+  .fin-stat-card:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+  .fin-stat-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 26px; font-weight: 700; color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  .fin-stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .fin-stat-icon { margin-bottom: 10px; font-size: 22px; }
+
+  /* BAR CHART */
+  .chart-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+  }
+  .chart-legend { display: flex; gap: 16px; margin-bottom: 24px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  .bar-chart {
+    display: flex; align-items: flex-end; gap: 10px;
+    height: 180px; padding: 0 4px;
+  }
+  .bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .bar-wrap {
+    flex: 1; width: 100%; display: flex; align-items: flex-end;
+    gap: 4px;
+  }
+  .bar {
+    flex: 1; border-radius: 6px 6px 0 0;
+    transform-origin: bottom;
+    animation: growBar 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-play-state: paused;
+    transform: scaleY(0);
+    position: relative;
+  }
+  .bar.animated { animation-play-state: running; }
+  @keyframes growBar {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
+  .bar.omzet { background: linear-gradient(180deg, var(--orange) 0%, var(--orange-dark) 100%); }
+  .bar.betaald { background: linear-gradient(180deg, var(--green) 0%, #059669 100%); opacity: 0.8; }
+  .bar-label { font-size: 11px; color: var(--text-muted); font-weight: 500; text-align: center; }
+
+  .chart-summary {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+  }
+  .progress-item { margin-bottom: 18px; }
+  .progress-item:last-child { margin-bottom: 0; }
+  .progress-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .progress-label { font-size: 13px; font-weight: 500; color: var(--text); }
+  .progress-value { font-size: 13px; font-weight: 600; color: var(--text); }
+  .progress-bar-wrap {
+    height: 8px; background: var(--bg); border-radius: 10px; overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%; border-radius: 10px;
+    animation: growWidth 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    width: 0;
+  }
+  .progress-bar.animated { }
+  @keyframes growWidth {
+    from { width: 0; }
+    to { width: var(--target-w); }
+  }
+  .progress-bar.orange { background: linear-gradient(90deg, var(--orange), var(--orange-dark)); --target-w: 100%; }
+  .progress-bar.green { background: linear-gradient(90deg, var(--green), #059669); }
+  .progress-bar.red { background: linear-gradient(90deg, var(--red), #dc2626); }
+
+  /* ===========================
+     REVIEWS
+  =========================== */
+  .reviews-header-stat {
+    display: flex; align-items: center; gap: 20px;
+    background: linear-gradient(135deg, var(--navy-deep) 0%, #1B3B6B 100%);
+    border-radius: var(--radius-lg); padding: 24px 28px;
+    margin-bottom: 24px; position: relative; overflow: hidden;
+  }
+  .reviews-header-stat::after {
+    content: '';
+    position: absolute; right: -20px; top: -20px;
+    width: 140px; height: 140px;
+    background: rgba(245,166,35,0.08);
+    border-radius: 50%;
+  }
+  .reviews-big-score {
+    font-family: 'Outfit', sans-serif;
+    font-size: 64px; font-weight: 800; color: var(--orange);
+    line-height: 1; letter-spacing: -2px;
+  }
+  .reviews-score-detail { flex: 1; }
+  .reviews-score-detail h3 {
+    font-size: 20px; font-weight: 600; color: #fff; margin-bottom: 8px;
+  }
+  .stars-row { display: flex; gap: 3px; margin-bottom: 8px; }
+  .star { color: var(--orange); font-size: 18px; }
+  .reviews-count { font-size: 13px; color: rgba(255,255,255,0.4); }
+
+  .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .review-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    position: relative;
+  }
+  .review-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .review-card::before {
+    content: '"';
+    position: absolute; top: 16px; right: 20px;
+    font-size: 60px; color: var(--border);
+    font-family: Georgia, serif; line-height: 1;
+  }
+  .review-stars { display: flex; gap: 3px; margin-bottom: 12px; }
+  .review-star { color: var(--orange); font-size: 15px; }
+  .review-text {
+    font-size: 13.5px; color: var(--text-muted); line-height: 1.7;
+    margin-bottom: 16px;
+    position: relative; z-index: 1;
+  }
+  .review-author { display: flex; align-items: center; gap: 10px; }
+  .review-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .review-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .review-date { font-size: 11px; color: var(--text-light); margin-top: 1px; }
+  .review-platform { font-size: 11px; color: var(--text-light); margin-top: 1px; display: flex; align-items: center; gap: 4px; }
+  .google-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #4285F4; }
+
+  /* ===========================
+     INSTELLINGEN
+  =========================== */
+  .settings-grid { display: grid; grid-template-columns: 240px 1fr; gap: 24px; }
+  .settings-nav .s-nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 8px;
+    cursor: pointer; font-size: 13.5px; color: var(--text-muted);
+    transition: var(--transition); margin-bottom: 3px;
+  }
+  .settings-nav .s-nav-item:hover { background: var(--bg); color: var(--text); }
+  .settings-nav .s-nav-item.active { background: var(--orange-light); color: var(--orange-dark); font-weight: 500; }
+  .settings-form .form-section { margin-bottom: 28px; }
+  .settings-form .form-section-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px; font-weight: 700; color: var(--text);
+    margin-bottom: 16px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .settings-form .s-form-group { margin-bottom: 18px; }
+  .settings-form .s-form-label { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.6px; }
+  .settings-form .s-form-input {
+    width: 100%; padding: 11px 14px;
+    border: 1px solid var(--border); border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 13.5px;
+    color: var(--text); background: var(--white);
+    outline: none; transition: var(--transition);
+  }
+  .settings-form .s-form-input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(245,166,35,0.1); }
+  .s-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; background: var(--bg); border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  .toggle-label { font-size: 13.5px; font-weight: 500; color: var(--text); }
+  .toggle-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .toggle {
+    width: 44px; height: 24px;
+    background: var(--border); border-radius: 12px;
+    position: relative; cursor: pointer; transition: var(--transition);
+    flex-shrink: 0;
+  }
+  .toggle.on { background: var(--orange); }
+  .toggle::after {
+    content: '';
+    position: absolute; top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    background: #fff; border-radius: 50%;
+    transition: var(--transition);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { left: 23px; }
+
+  /* ===========================
+     NOTIFICATIONS PANEL
+  =========================== */
+  .notif-panel {
+    position: fixed; top: 68px; right: 20px;
+    width: 340px; background: var(--white);
+    border-radius: var(--radius-lg); border: 1px solid var(--border);
+    box-shadow: var(--shadow-xl);
+    z-index: 200; transform: translateY(-8px); opacity: 0;
+    visibility: hidden; transition: var(--transition);
+  }
+  .notif-panel.open { transform: translateY(0); opacity: 1; visibility: visible; }
+  .notif-header { padding: 18px 20px; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; }
+  .notif-header h3 { font-size: 15px; font-weight: 700; color: var(--text); }
+  .notif-mark { font-size: 12px; color: var(--orange); cursor: pointer; font-weight: 500; }
+  .notif-item {
+    display: flex; gap: 12px; padding: 14px 20px;
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.15s; cursor: pointer;
+  }
+  .notif-item:last-child { border-bottom: none; }
+  .notif-item:hover { background: var(--bg); }
+  .notif-item.unread { background: rgba(245,166,35,0.03); }
+  .notif-icon-wrap {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .notif-body { flex: 1; min-width: 0; }
+  .notif-text { font-size: 13px; color: var(--text); line-height: 1.4; }
+  .notif-text strong { font-weight: 600; }
+  .notif-time { font-size: 11px; color: var(--text-light); margin-top: 3px; }
+  .notif-dot {
+    width: 7px; height: 7px; background: var(--orange); border-radius: 50;
+    border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+  }
+
+  /* ===========================
+     MOBILE NAV
+  =========================== */
+  .mobile-nav {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--navy-deep);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
+    z-index: 100;
+    justify-content: space-around;
+  }
+  .mobile-nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; padding: 6px 12px; border-radius: 8px;
+    transition: var(--transition); color: rgba(255,255,255,0.4);
+    font-size: 10px; font-weight: 500;
+    min-width: 50px;
+  }
+  .mobile-nav-item.active { color: var(--orange); }
+  .mobile-nav-item svg { width: 20px; height: 20px; }
+
+  /* ===========================
+     RESPONSIVE
+  =========================== */
+  @media (max-width: 1200px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .clients-grid { grid-template-columns: repeat(2, 1fr); }
+    .reviews-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 1024px) {
+    :root { --sidebar-w: 220px; }
+    .page-content { padding: 24px; }
+    .topbar { padding: 0 24px; }
+  }
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .clients-grid { grid-template-columns: 1fr; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .planning-grid { grid-template-columns: 1fr; }
+    .finance-grid { grid-template-columns: 1fr; }
+    .finance-stats { grid-template-columns: 1fr; }
+    .settings-grid { grid-template-columns: 1fr; }
+    .mobile-nav { display: flex; }
+    .main { padding-bottom: 70px; }
+    .topbar { padding: 0 16px; }
+    .page-content { padding: 16px; }
+    .topbar-search { display: none; }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .stat-value { font-size: 26px; }
+    .login-card { padding: 32px 24px; margin: 16px; }
+  }
+
+  /* ===========================
+     UTILITY
+  =========================== */
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .gap-2 { gap: 8px; }
+  .gap-3 { gap: 12px; }
+  .mt-1 { margin-top: 4px; }
+  .mt-2 { margin-top: 8px; }
+  .mt-4 { margin-top: 16px; }
+  .mt-6 { margin-top: 24px; }
+  .mb-4 { margin-bottom: 16px; }
+  .mb-6 { margin-bottom: 24px; }
+  .text-muted { color: var(--text-muted); }
+  .text-sm { font-size: 12.5px; }
+  .font-semibold { font-weight: 600; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
+
+  /* Overlay for mobile sidebar */
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 99; backdrop-filter: blur(2px);
+  }
+  .sidebar-overlay.show { display: block; }
+
+  /* Hamburger */
+  .hamburger {
+    display: none; width: 38px; height: 38px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--white); cursor: pointer;
+    align-items: center; justify-content: center;
+    transition: var(--transition); color: var(--text-muted);
+  }
+  .hamburger:hover { background: var(--bg); color: var(--text); }
+  @media (max-width: 768px) { .hamburger { display: flex; } }
+
+  /* Quick add fab */
+  .fab {
+    display: none;
+    position: fixed; bottom: 80px; right: 20px;
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+    border-radius: 50%; border: none;
+    box-shadow: 0 6px 20px rgba(245,166,35,0.45);
+    color: #fff; cursor: pointer;
+    align-items: center; justify-content: center;
+    transition: var(--transition); z-index: 98;
+  }
+  .fab:hover { transform: scale(1.08); }
+  @media (max-width: 768px) { .fab { display: flex; } }
+
+  /* Skeleton loader animation */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .skeleton {
+    background: linear-gradient(90deg, var(--border-light) 25%, var(--bg) 50%, var(--border-light) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+  }
+
+  /* Chart tooltip */
+  .bar:hover::before {
+    content: attr(data-val);
+    position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+    background: var(--navy-deep); color: #fff;
+    font-size: 11px; font-weight: 600; padding: 4px 8px;
+    border-radius: 6px; white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .bar:hover::after {
+    content: '';
+    position: absolute; bottom: calc(100% + 2px); left: 50%; transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: var(--navy-deep);
+    pointer-events: none;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="loginScreen">
+  <div class="login-bg-pattern">
+    <div class="login-dots"></div>
+  </div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <path d="M13 3L2 12h3v10h6v-6h4v6h6V12h3L13 3z" fill="white" opacity="0.95"/>
+          <circle cx="10" cy="17" r="1.2" fill="#F5A623"/>
+          <circle cx="16" cy="17" r="1.2" fill="#F5A623"/>
+          <path d="M9 19.5 Q13 22 17 19.5" stroke="#F5A623" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="login-logo-text">Veenstra<span>.</span></div>
+      </div>
+    </div>
+    <p class="login-tagline">Totaalonderhoud — Beheerpaneel</p>
+    <h2 class="login-title">Welkom terug</h2>
+    <p class="login-subtitle">Log in op uw beheerpaneel</p>
+
+    <div class="form-group">
+      <label class="form-label">E-mailadres</label>
+      <input type="email" class="form-input" id="loginEmail" placeholder="admin@veenstratotaalonderhoud.nl" value="admin@veenstratotaalonderhoud.nl">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Wachtwoord</label>
+      <input type="password" class="form-input" id="loginPass" placeholder="••••••••" value="••••••••">
+    </div>
+    <div class="login-remember">
+      <label class="remember-check">
+        <input type="checkbox" checked> Onthoud mij
+      </label>
+      <a href="#" class="forgot-link">Wachtwoord vergeten?</a>
+    </div>
+    <button class="btn-login" onclick="doLogin()">Inloggen →</button>
+    <p class="login-footer">Veenstra Totaalonderhoud &copy; 2025 &nbsp;·&nbsp; Versie 2.4.1</p>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD APP ===== -->
+<div id="dashboardApp">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-glow"></div>
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg width="22" height="22" viewBox="0 0 26 26" fill="none">
+          <path d="M13 3L2 12h3v10h6v-6h4v6h6V12h3L13 3z" fill="white" opacity="0.95"/>
+          <circle cx="10" cy="17" r="1.2" fill="#F5A623"/>
+          <circle cx="16" cy="17" r="1.2" fill="#F5A623"/>
+          <path d="M9 19.5 Q13 22 17 19.5" stroke="#F5A623" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">Veenstra<span>.</span></div>
+        <div class="logo-sub">Totaalonderhoud</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Hoofdmenu</div>
+      <div class="nav-item active" onclick="showPage('dashboard', this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </span>
+        Dashboard
+      </div>
+      <div class="nav-item" onclick="showPage('leads', this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
+        Leads &amp; Offertes
+        <span class="nav-badge">12</span>
+      </div>
+      <div class="nav-item" onclick="showPage('planning', this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </span>
+        Planning
+      </div>
+      <div class="nav-item" onclick="showPage('klanten', this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </span>
+        Klantbeheer
+      </div>
+      <div class="nav-section-label">Financieel &amp; Marketing</div>
+      <div class="nav-item" onclick="showPage('financieel', this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </span>
+        Financieel
+      </div>
+      <div class="nav-item" onclick="showPage('reviews', this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </span>
+        Reviews
+      </div>
+      <div class="nav-section-label">Beheer</div>
+      <div class="nav-item" onclick="showPage('instellingen', this)">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </span>
+        Instellingen
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar">RV</div>
+        <div class="user-info">
+          <div class="user-name">Rob Veenstra</div>
+          <div class="user-role">Beheerder</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleSidebar()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div>
+          <div class="topbar-title" id="pageTitle">Dashboard</div>
+          <div class="topbar-breadcrumb">
+            <span>Veenstra</span>
+            <span class="breadcrumb-sep">›</span>
+            <span id="pageBreadcrumb">Overzicht</span>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Zoeken...">
+        </div>
+        <div class="icon-btn" onclick="toggleNotif()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="badge">3</span>
+        </div>
+        <div class="icon-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="topbar-avatar">RV</div>
+      </div>
+    </header>
+
+    <!-- NOTIFICATIONS PANEL -->
+    <div class="notif-panel" id="notifPanel">
+      <div class="notif-header">
+        <h3>Meldingen</h3>
+        <span class="notif-mark" onclick="markAllRead()">Alles gelezen</span>
+      </div>
+      <div class="notif-item unread">
+        <div class="notif-icon-wrap" style="background:var(--blue-light);color:var(--blue)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        </div>
+        <div class="notif-body">
+          <div class="notif-text"><strong>Nieuwe lead:</strong> Pieter van Dam via website</div>
+          <div class="notif-time">5 minuten geleden</div>
+        </div>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="notif-item unread">
+        <div class="notif-icon-wrap" style="background:var(--orange-light);color:var(--orange-dark)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="notif-body">
+          <div class="notif-text"><strong>Betaling ontvangen:</strong> A. van der Berg €3.850</div>
+          <div class="notif-time">1 uur geleden</div>
+        </div>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="notif-item unread">
+        <div class="notif-icon-wrap" style="background:var(--green-light);color:var(--green)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="notif-body">
+          <div class="notif-text"><strong>Nieuwe review:</strong> ★★★★★ van M. Jansen</div>
+          <div class="notif-time">3 uur geleden</div>
+        </div>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="notif-item">
+        <div class="notif-icon-wrap" style="background:var(--border-light);color:var(--text-muted)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="notif-body">
+          <div class="notif-text">Herinnering: Klus morgen 08:00 — H. de Boer, Haarlem</div>
+          <div class="notif-time">Gisteren 17:30</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE: DASHBOARD
+    ============================================================ -->
+    <div class="page-content active" id="page-dashboard">
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon-wrap blue">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <span class="stat-change up">▲ +18%</span>
+          </div>
+          <div class="stat-value">12</div>
+          <div class="stat-label">Nieuwe Leads deze week</div>
+          <div class="stat-period">vs. vorige week: 10 leads</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon-wrap orange">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <span class="stat-change up">▲ +5%</span>
+          </div>
+          <div class="stat-value">8</div>
+          <div class="stat-label">Geplande Klussen</div>
+          <div class="stat-period">vs. vorige week: 7 klussen</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon-wrap green">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <span class="stat-change up">▲ +12%</span>
+          </div>
+          <div class="stat-value">€47.250</div>
+          <div class="stat-label">Omzet deze maand</div>
+          <div class="stat-period">vs. vorige maand: €42.180</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon-wrap purple">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <span class="stat-change down">▼ -3%</span>
+          </div>
+          <div class="stat-value">€23.800</div>
+          <div class="stat-label">Openstaande Offertes</div>
+          <div class="stat-period">vs. vorige maand: €24.540</div>
+        </div>
+      </div>
+
+      <!-- 2-column layout: table + sidebar widgets -->
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;">
+        <!-- Leads table -->
+        <div class="card">
+          <div class="table-toolbar">
+            <div class="search-input-wrap">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" placeholder="Zoek leads..." oninput="filterTable(this.value)">
+            </div>
+            <div class="table-actions">
+              <button class="btn btn-secondary">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                Filter
+              </button>
+              <button class="btn btn-primary">+ Nieuw</button>
+            </div>
+          </div>
+          <table id="leadsTable">
+            <thead>
+              <tr>
+                <th>Naam</th>
+                <th>Telefoon</th>
+                <th>Dienst</th>
+                <th>Status</th>
+                <th>Datum</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="td-name">Jan de Vries</div><div class="td-phone text-sm">Haarlem</div></td>
+                <td class="td-phone">+31 6 12 34 56 78</td>
+                <td class="td-service">Daklekkage reparatie</td>
+                <td><span class="badge nieuw"><span class="badge-dot"></span>Nieuw</span></td>
+                <td class="text-muted text-sm">7 apr 2025</td>
+                <td><div class="action-btns"><button class="action-btn" title="Bewerken"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn" title="Bellen"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td><div class="td-name">Maria Bakker</div><div class="td-phone text-sm">Amsterdam-Noord</div></td>
+                <td class="td-phone">+31 6 87 65 43 21</td>
+                <td class="td-service">Gevelonderhoud</td>
+                <td><span class="badge gebeld"><span class="badge-dot"></span>Gebeld</span></td>
+                <td class="text-muted text-sm">6 apr 2025</td>
+                <td><div class="action-btns"><button class="action-btn" title="Bewerken"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn" title="Bellen"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td><div class="td-name">Henk van den Berg</div><div class="td-phone text-sm">Alkmaar</div></td>
+                <td class="td-phone">+31 6 11 22 33 44</td>
+                <td class="td-service">Dakpannen vervangen</td>
+                <td><span class="badge offerte"><span class="badge-dot"></span>Offerte Verstuurd</span></td>
+                <td class="text-muted text-sm">5 apr 2025</td>
+                <td><div class="action-btns"><button class="action-btn" title="Bewerken"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td><div class="td-name">Sophie Janssen</div><div class="td-phone text-sm">Utrecht-Oost</div></td>
+                <td class="td-phone">+31 6 55 44 33 22</td>
+                <td class="td-service">Lood en zinkwerk</td>
+                <td><span class="badge akkoord"><span class="badge-dot"></span>Akkoord</span></td>
+                <td class="text-muted text-sm">4 apr 2025</td>
+                <td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td><div class="td-name">Klaas Meijer</div><div class="td-phone text-sm">Zaandam</div></td>
+                <td class="td-phone">+31 6 98 76 54 32</td>
+                <td class="td-service">Vogeloverlast beveiliging</td>
+                <td><span class="badge ingepland"><span class="badge-dot"></span>Ingepland</span></td>
+                <td class="text-muted text-sm">3 apr 2025</td>
+                <td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td><div class="td-name">Annemarie Smit</div><div class="td-phone text-sm">Hilversum</div></td>
+                <td class="td-phone">+31 6 24 68 13 57</td>
+                <td class="td-service">Dakkapel onderhoud</td>
+                <td><span class="badge nieuw"><span class="badge-dot"></span>Nieuw</span></td>
+                <td class="text-muted text-sm">2 apr 2025</td>
+                <td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td><div class="td-name">Dirk Hoogenbosch</div><div class="td-phone text-sm">Purmerend</div></td>
+                <td class="td-phone">+31 6 77 88 99 00</td>
+                <td class="td-service">Zinken dakgoten</td>
+                <td><span class="badge gebeld"><span class="badge-dot"></span>Gebeld</span></td>
+                <td class="text-muted text-sm">1 apr 2025</td>
+                <td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button></div></td>
+              </tr>
+              <tr>
+                <td><div class="td-name">Lotte van Dijk</div><div class="td-phone text-sm">Edam-Volendam</div></td>
+                <td class="td-phone">+31 6 33 55 77 99</td>
+                <td class="td-service">Plat dak bitumen</td>
+                <td><span class="badge akkoord"><span class="badge-dot"></span>Akkoord</span></td>
+                <td class="text-muted text-sm">31 mrt 2025</td>
+                <td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Right sidebar: mini widgets -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <!-- Reviews widget -->
+          <div class="card" style="padding:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <div>
+                <div class="card-title">Google Reviews</div>
+                <div class="card-subtitle">Gemiddeld 4.9 ★</div>
+              </div>
+              <div style="background:var(--orange-light);color:var(--orange-dark);font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;padding:6px 12px;border-radius:10px;">4.9</div>
+            </div>
+            <div style="display:flex;gap:3px;margin-bottom:14px;">
+              <span style="color:var(--orange);font-size:16px;">★★★★★</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="background:var(--bg);border-radius:8px;padding:12px;">
+                <div style="display:flex;gap:3px;margin-bottom:6px;"><span style="color:var(--orange);font-size:12px;">★★★★★</span></div>
+                <div style="font-size:12.5px;color:var(--text-muted);line-height:1.5;margin-bottom:8px;">"Uitstekend werk! Daklekkage in één dag opgelost."</div>
+                <div style="font-size:11.5px;font-weight:600;color:var(--text);">Marco Visser</div>
+              </div>
+              <div style="background:var(--bg);border-radius:8px;padding:12px;">
+                <div style="display:flex;gap:3px;margin-bottom:6px;"><span style="color:var(--orange);font-size:12px;">★★★★★</span></div>
+                <div style="font-size:12.5px;color:var(--text-muted);line-height:1.5;margin-bottom:8px;">"Vakkundig en netjes. Aanrader voor iedereen!"</div>
+                <div style="font-size:11.5px;font-weight:600;color:var(--text);">Ingrid Kok</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick stats -->
+          <div class="card" style="padding:20px;">
+            <div class="card-title" style="margin-bottom:16px;">Vandaag</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--blue-light);border-radius:8px;">
+                <span style="font-size:13px;color:#1e40af;font-weight:500;">Afspraken</span>
+                <span style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;color:#1e40af;">3</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--orange-light);border-radius:8px;">
+                <span style="font-size:13px;color:var(--orange-dark);font-weight:500;">Te bellen</span>
+                <span style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;color:var(--orange-dark);">5</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--green-light);border-radius:8px;">
+                <span style="font-size:13px;color:var(--green);font-weight:500;">Betalingen</span>
+                <span style="font-family:'Outfit',sans-serif;font-size:20px;font-weight:700;color:var(--green);">€8.200</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact info -->
+          <div class="card" style="padding:20px;background:linear-gradient(135deg,var(--navy-deep) 0%,#1B3B6B 100%);border:none;">
+            <div style="font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;color:#fff;margin-bottom:14px;">Bedrijfsinfo</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:28px;height:28px;background:rgba(245,166,35,0.2);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </div>
+                <span style="font-size:12.5px;color:rgba(255,255,255,0.7);">+31 6 17835171</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:28px;height:28px;background:rgba(245,166,35,0.2);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <span style="font-size:12px;color:rgba(255,255,255,0.7);">info@veenstratotaalonderhoud.nl</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE: LEADS
+    ============================================================ -->
+    <div class="page-content" id="page-leads">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Leads &amp; Offertes</h2>
+          <p class="section-subtitle">Beheer al uw leads en offertes op één plek</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-secondary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Exporteren
+          </button>
+          <button class="btn btn-primary">+ Nieuwe Lead</button>
+        </div>
+      </div>
+
+      <!-- Status filters -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+        <button class="btn btn-secondary" style="font-size:12px;padding:7px 14px;" onclick="filterByStatus('all', this)">Alle (8)</button>
+        <button class="btn" style="font-size:12px;padding:7px 14px;background:var(--blue-light);color:var(--blue);border:none;" onclick="filterByStatus('nieuw', this)">Nieuw (3)</button>
+        <button class="btn" style="font-size:12px;padding:7px 14px;background:var(--orange-light);color:var(--orange-dark);border:none;" onclick="filterByStatus('gebeld', this)">Gebeld (2)</button>
+        <button class="btn" style="font-size:12px;padding:7px 14px;background:var(--purple-light);color:var(--purple);border:none;" onclick="filterByStatus('offerte', this)">Offerte Verstuurd (1)</button>
+        <button class="btn" style="font-size:12px;padding:7px 14px;background:var(--green-light);color:var(--green);border:none;" onclick="filterByStatus('akkoord', this)">Akkoord (2)</button>
+        <button class="btn" style="font-size:12px;padding:7px 14px;background:#DBEEFF;color:var(--navy);border:none;" onclick="filterByStatus('ingepland', this)">Ingepland (1)</button>
+      </div>
+
+      <div class="card">
+        <div class="table-toolbar">
+          <div class="search-input-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Zoek op naam, dienst, locatie..." oninput="filterTable(this.value)">
+          </div>
+          <div class="table-actions">
+            <button class="btn btn-secondary">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              Filter
+            </button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>Naam</th>
+              <th>Telefoon</th>
+              <th>Dienst</th>
+              <th>Status</th>
+              <th>Datum</th>
+              <th>Waarde</th>
+              <th>Acties</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td><div class="td-name">Jan de Vries</div><div class="td-phone text-sm">Haarlem</div></td><td class="td-phone">+31 6 12 34 56 78</td><td class="td-service">Daklekkage reparatie</td><td><span class="badge nieuw"><span class="badge-dot"></span>Nieuw</span></td><td class="text-muted text-sm">7 apr 2025</td><td class="font-semibold">€1.850</td><td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div></td></tr>
+            <tr><td><input type="checkbox"></td><td><div class="td-name">Maria Bakker</div><div class="td-phone text-sm">Amsterdam-Noord</div></td><td class="td-phone">+31 6 87 65 43 21</td><td class="td-service">Gevelonderhoud</td><td><span class="badge gebeld"><span class="badge-dot"></span>Gebeld</span></td><td class="text-muted text-sm">6 apr 2025</td><td class="font-semibold">€3.200</td><td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div></td></tr>
+            <tr><td><input type="checkbox"></td><td><div class="td-name">Henk van den Berg</div><div class="td-phone text-sm">Alkmaar</div></td><td class="td-phone">+31 6 11 22 33 44</td><td class="td-service">Dakpannen vervangen</td><td><span class="badge offerte"><span class="badge-dot"></span>Offerte Verstuurd</span></td><td class="text-muted text-sm">5 apr 2025</td><td class="font-semibold">€6.750</td><td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div></td></tr>
+            <tr><td><input type="checkbox"></td><td><div class="td-name">Sophie Janssen</div><div class="td-phone text-sm">Utrecht-Oost</div></td><td class="td-phone">+31 6 55 44 33 22</td><td class="td-service">Lood en zinkwerk</td><td><span class="badge akkoord"><span class="badge-dot"></span>Akkoord</span></td><td class="text-muted text-sm">4 apr 2025</td><td class="font-semibold">€4.100</td><td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div></td></tr>
+            <tr><td><input type="checkbox"></td><td><div class="td-name">Klaas Meijer</div><div class="td-phone text-sm">Zaandam</div></td><td class="td-phone">+31 6 98 76 54 32</td><td class="td-service">Vogeloverlast beveiliging</td><td><span class="badge ingepland"><span class="badge-dot"></span>Ingepland</span></td><td class="text-muted text-sm">3 apr 2025</td><td class="font-semibold">€2.450</td><td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div></td></tr>
+            <tr><td><input type="checkbox"></td><td><div class="td-name">Annemarie Smit</div><div class="td-phone text-sm">Hilversum</div></td><td class="td-phone">+31 6 24 68 13 57</td><td class="td-service">Dakkapel onderhoud</td><td><span class="badge nieuw"><span class="badge-dot"></span>Nieuw</span></td><td class="text-muted text-sm">2 apr 2025</td><td class="font-semibold">€890</td><td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div></td></tr>
+            <tr><td><input type="checkbox"></td><td><div class="td-name">Dirk Hoogenbosch</div><div class="td-phone text-sm">Purmerend</div></td><td class="td-phone">+31 6 77 88 99 00</td><td class="td-service">Zinken dakgoten</td><td><span class="badge gebeld"><span class="badge-dot"></span>Gebeld</span></td><td class="text-muted text-sm">1 apr 2025</td><td class="font-semibold">€1.600</td><td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div></td></tr>
+            <tr><td><input type="checkbox"></td><td><div class="td-name">Lotte van Dijk</div><div class="td-phone text-sm">Edam-Volendam</div></td><td class="td-phone">+31 6 33 55 77 99</td><td class="td-service">Plat dak bitumen</td><td><span class="badge akkoord"><span class="badge-dot"></span>Akkoord</span></td><td class="text-muted text-sm">31 mrt 2025</td><td class="font-semibold">€5.300</td><td><div class="action-btns"><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div></td></tr>
+          </tbody>
+        </table>
+        <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border-light);">
+          <span style="font-size:12px;color:var(--text-muted);">Pagina 1 van 1 · 8 leads</span>
+          <div style="display:flex;gap:4px;">
+            <button class="btn btn-secondary" style="padding:5px 12px;font-size:12px;">‹ Vorige</button>
+            <button class="btn btn-secondary" style="padding:5px 12px;font-size:12px;background:var(--orange);color:#fff;border-color:var(--orange);">1</button>
+            <button class="btn btn-secondary" style="padding:5px 12px;font-size:12px;">Volgende ›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE: PLANNING
+    ============================================================ -->
+    <div class="page-content" id="page-planning">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Planning &amp; Agenda</h2>
+          <p class="section-subtitle">Week van 7 t/m 11 april 2025</p>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" style="padding:8px 14px;font-size:12px;">‹ Vorige</button>
+          <button class="btn btn-secondary" style="padding:8px 14px;font-size:12px;background:var(--orange-light);color:var(--orange-dark);border-color:var(--orange-light);">Vandaag</button>
+          <button class="btn btn-secondary" style="padding:8px 14px;font-size:12px;">Volgende ›</button>
+          <button class="btn btn-primary" style="padding:8px 14px;font-size:12px;">+ Inplannen</button>
+        </div>
+      </div>
+
+      <!-- Weather Row -->
+      <!-- Week Calendar -->
+      <div class="week-calendar">
+        <div class="week-inner">
+        <div class="week-header">
+          <div class="week-header-cell" style="padding:14px 10px;"></div>
+          <div class="week-header-cell today">
+            <span class="day-num">7</span>
+            Maandag
+          </div>
+          <div class="week-header-cell">
+            <span class="day-num">8</span>
+            Dinsdag
+          </div>
+          <div class="week-header-cell">
+            <span class="day-num">9</span>
+            Woensdag
+          </div>
+          <div class="week-header-cell">
+            <span class="day-num">10</span>
+            Donderdag
+          </div>
+          <div class="week-header-cell">
+            <span class="day-num">11</span>
+            Vrijdag
+          </div>
+        </div>
+        <div class="week-body">
+          <!-- 08:00 -->
+          <div class="week-slot">
+            <div class="week-time">08:00</div>
+            <div class="week-days">
+              <div class="appt orange">
+                <div class="appt-name">J. de Vries</div>
+                <div class="appt-type">Daklekkage · Haarlem</div>
+              </div>
+              <div class="appt empty"></div>
+              <div class="appt empty"></div>
+              <div class="appt blue">
+                <div class="appt-name">H. de Boer</div>
+                <div class="appt-type">Goten · Leiden</div>
+              </div>
+              <div class="appt empty"></div>
+            </div>
+          </div>
+          <!-- 10:00 -->
+          <div class="week-slot">
+            <div class="week-time">10:00</div>
+            <div class="week-days">
+              <div class="appt empty"></div>
+              <div class="appt green">
+                <div class="appt-name">M. Bakker</div>
+                <div class="appt-type">Gevel · Amsterdam</div>
+              </div>
+              <div class="appt empty"></div>
+              <div class="appt empty"></div>
+              <div class="appt navy">
+                <div class="appt-name">S. Janssen</div>
+                <div class="appt-type">Lood zink · Utrecht</div>
+              </div>
+            </div>
+          </div>
+          <!-- 13:00 -->
+          <div class="week-slot">
+            <div class="week-time">13:00</div>
+            <div class="week-days">
+              <div class="appt purple">
+                <div class="appt-name">K. Meijer</div>
+                <div class="appt-type">Vogels · Zaandam</div>
+              </div>
+              <div class="appt empty"></div>
+              <div class="appt orange">
+                <div class="appt-name">A. Smit</div>
+                <div class="appt-type">Dakkapel · Hilversum</div>
+              </div>
+              <div class="appt empty"></div>
+              <div class="appt empty"></div>
+            </div>
+          </div>
+          <!-- 15:00 -->
+          <div class="week-slot">
+            <div class="week-time">15:00</div>
+            <div class="week-days">
+              <div class="appt empty"></div>
+              <div class="appt blue">
+                <div class="appt-name">L. van Dijk</div>
+                <div class="appt-type">Plat dak · Volendam</div>
+              </div>
+              <div class="appt empty"></div>
+              <div class="appt green">
+                <div class="appt-name">D. Hoogenbosch</div>
+                <div class="appt-type">Goten · Purmerend</div>
+              </div>
+              <div class="appt empty"></div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE: KLANTEN
+    ============================================================ -->
+    <div class="page-content" id="page-klanten">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Klantbeheer</h2>
+          <p class="section-subtitle">Overzicht van al uw klanten en projecten</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-secondary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            Filteren
+          </button>
+          <button class="btn btn-primary">+ Nieuwe Klant</button>
+        </div>
+      </div>
+
+      <div class="clients-grid">
+        <div class="client-card">
+          <div class="client-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="client-avatar" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8);">JV</div>
+              <div>
+                <div class="client-name">Jan de Vries</div>
+                <div class="client-address"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Slachthuisstraat 14, Haarlem</div>
+                <div class="client-project" style="margin-top:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Daklekkage reparatie</div>
+              </div>
+            </div>
+            <span class="badge actief"><span class="badge-dot"></span>Actief</span>
+          </div>
+          <div class="client-meta">
+            <span class="client-date">Klant sinds: jan 2024</span>
+            <span style="font-size:12px;font-weight:600;color:var(--orange);">€1.850</span>
+          </div>
+        </div>
+
+        <div class="client-card">
+          <div class="client-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="client-avatar" style="background:linear-gradient(135deg,#10B981,#059669);">MB</div>
+              <div>
+                <div class="client-name">Maria Bakker</div>
+                <div class="client-address"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Nieuwendammerdijk 88, Amsterdam</div>
+                <div class="client-project" style="margin-top:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Gevelonderhoud</div>
+              </div>
+            </div>
+            <span class="badge actief"><span class="badge-dot"></span>Actief</span>
+          </div>
+          <div class="client-meta">
+            <span class="client-date">Klant sinds: mrt 2023</span>
+            <span style="font-size:12px;font-weight:600;color:var(--orange);">€3.200</span>
+          </div>
+        </div>
+
+        <div class="client-card">
+          <div class="client-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="client-avatar" style="background:linear-gradient(135deg,var(--orange),var(--orange-dark));">HB</div>
+              <div>
+                <div class="client-name">Henk van den Berg</div>
+                <div class="client-address"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Koedijk 42, Alkmaar</div>
+                <div class="client-project" style="margin-top:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Dakpannen vervangen</div>
+              </div>
+            </div>
+            <span class="badge afgerond"><span class="badge-dot"></span>Afgerond</span>
+          </div>
+          <div class="client-meta">
+            <span class="client-date">Klant sinds: aug 2022</span>
+            <span style="font-size:12px;font-weight:600;color:var(--text-muted);">€6.750</span>
+          </div>
+        </div>
+
+        <div class="client-card">
+          <div class="client-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="client-avatar" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED);">SJ</div>
+              <div>
+                <div class="client-name">Sophie Janssen</div>
+                <div class="client-address"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Wittevrouwenstraat 7, Utrecht</div>
+                <div class="client-project" style="margin-top:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Lood en zinkwerk</div>
+              </div>
+            </div>
+            <span class="badge actief"><span class="badge-dot"></span>Actief</span>
+          </div>
+          <div class="client-meta">
+            <span class="client-date">Klant sinds: nov 2023</span>
+            <span style="font-size:12px;font-weight:600;color:var(--orange);">€4.100</span>
+          </div>
+        </div>
+
+        <div class="client-card">
+          <div class="client-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="client-avatar" style="background:linear-gradient(135deg,var(--navy),var(--navy-deep));">KM</div>
+              <div>
+                <div class="client-name">Klaas Meijer</div>
+                <div class="client-address"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Peperstraat 33, Zaandam</div>
+                <div class="client-project" style="margin-top:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Vogeloverlast beveiliging</div>
+              </div>
+            </div>
+            <span class="badge actief"><span class="badge-dot"></span>Actief</span>
+          </div>
+          <div class="client-meta">
+            <span class="client-date">Klant sinds: feb 2025</span>
+            <span style="font-size:12px;font-weight:600;color:var(--orange);">€2.450</span>
+          </div>
+        </div>
+
+        <div class="client-card">
+          <div class="client-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="client-avatar" style="background:linear-gradient(135deg,#EF4444,#DC2626);">LD</div>
+              <div>
+                <div class="client-name">Lotte van Dijk</div>
+                <div class="client-address"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Julianaweg 5, Edam-Volendam</div>
+                <div class="client-project" style="margin-top:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Plat dak bitumen</div>
+              </div>
+            </div>
+            <span class="badge afgerond"><span class="badge-dot"></span>Afgerond</span>
+          </div>
+          <div class="client-meta">
+            <span class="client-date">Klant sinds: sep 2021</span>
+            <span style="font-size:12px;font-weight:600;color:var(--text-muted);">€5.300</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE: FINANCIEEL
+    ============================================================ -->
+    <div class="page-content" id="page-financieel">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Financieel Overzicht</h2>
+          <p class="section-subtitle">Omzet, betalingen en openstaande facturen</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <select class="btn btn-secondary" style="cursor:pointer;appearance:none;padding-right:28px;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22%236B7280%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22/></svg>');background-repeat:no-repeat;background-position:right 8px center;background-size:14px;">
+            <option>April 2025</option>
+            <option>Maart 2025</option>
+            <option>Februari 2025</option>
+          </select>
+          <button class="btn btn-primary">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Rapport downloaden
+          </button>
+        </div>
+      </div>
+
+      <!-- Finance Stats -->
+      <div class="finance-stats">
+        <div class="fin-stat-card">
+          <div class="fin-stat-icon">💰</div>
+          <div class="fin-stat-value" style="color:var(--text);">€47.250</div>
+          <div class="fin-stat-label">Totale Omzet</div>
+          <div style="margin-top:8px;"><span class="stat-change up" style="font-size:11px;">▲ +12% vs vorige maand</span></div>
+        </div>
+        <div class="fin-stat-card">
+          <div class="fin-stat-icon">✅</div>
+          <div class="fin-stat-value" style="color:var(--green);">€34.850</div>
+          <div class="fin-stat-label">Betaald</div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted);">73.7% van omzet</div>
+        </div>
+        <div class="fin-stat-card">
+          <div class="fin-stat-icon">⏳</div>
+          <div class="fin-stat-value" style="color:var(--orange);">€12.400</div>
+          <div class="fin-stat-label">Openstaand</div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted);">7 facturen</div>
+        </div>
+      </div>
+
+      <div class="finance-grid">
+        <!-- Bar Chart -->
+        <div class="chart-card" id="chartCard">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+            <div>
+              <div class="card-title">Omzet per maand</div>
+              <div class="card-subtitle">Laatste 6 maanden</div>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--orange);"></div>Omzet</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div>Betaald</div>
+            </div>
+          </div>
+          <div class="bar-chart" id="barChart">
+            <div class="bar-group">
+              <div class="bar-wrap">
+                <div class="bar omzet" style="height:62%;" data-val="€29.400"></div>
+                <div class="bar betaald" style="height:55%;" data-val="€23.800"></div>
+              </div>
+              <div class="bar-label">Nov</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap">
+                <div class="bar omzet" style="height:68%;" data-val="€33.100"></div>
+                <div class="bar betaald" style="height:60%;" data-val="€27.500"></div>
+              </div>
+              <div class="bar-label">Dec</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap">
+                <div class="bar omzet" style="height:52%;" data-val="€25.600"></div>
+                <div class="bar betaald" style="height:48%;" data-val="€21.200"></div>
+              </div>
+              <div class="bar-label">Jan</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap">
+                <div class="bar omzet" style="height:72%;" data-val="€35.800"></div>
+                <div class="bar betaald" style="height:65%;" data-val="€30.100"></div>
+              </div>
+              <div class="bar-label">Feb</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap">
+                <div class="bar omzet" style="height:85%;" data-val="€42.180"></div>
+                <div class="bar betaald" style="height:78%;" data-val="€38.900"></div>
+              </div>
+              <div class="bar-label">Mrt</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap">
+                <div class="bar omzet" style="height:96%;" data-val="€47.250"></div>
+                <div class="bar betaald" style="height:71%;" data-val="€34.850"></div>
+              </div>
+              <div class="bar-label">Apr</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress summary -->
+        <div class="chart-summary" id="chartSummary">
+          <div class="card-title" style="margin-bottom:20px;">Financiële verdeling</div>
+          <div class="progress-item">
+            <div class="progress-header">
+              <span class="progress-label">Totale omzet</span>
+              <span class="progress-value">€47.250</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar orange" style="--target-w:100%;animation-duration:1.2s;"></div>
+            </div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header">
+              <span class="progress-label">Betaald (73.7%)</span>
+              <span class="progress-value" style="color:var(--green);">€34.850</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar green" style="--target-w:73.7%;animation-duration:1.4s;"></div>
+            </div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header">
+              <span class="progress-label">Openstaand (26.3%)</span>
+              <span class="progress-value" style="color:var(--orange);">€12.400</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar" style="background:var(--orange);--target-w:26.3%;animation-duration:1.6s;"></div>
+            </div>
+          </div>
+
+          <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border-light);">
+            <div class="card-title" style="font-size:14px;margin-bottom:16px;">Recente facturen</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:8px;">
+                <div><div style="font-size:13px;font-weight:600;color:var(--text);">S. Janssen</div><div style="font-size:11.5px;color:var(--text-muted);">Factuur #2025-041</div></div>
+                <div style="text-align:right;"><div style="font-size:13px;font-weight:700;color:var(--text);">€4.100</div><span class="badge akkoord" style="font-size:10px;padding:2px 7px;">Betaald</span></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:8px;">
+                <div><div style="font-size:13px;font-weight:600;color:var(--text);">K. Meijer</div><div style="font-size:11.5px;color:var(--text-muted);">Factuur #2025-040</div></div>
+                <div style="text-align:right;"><div style="font-size:13px;font-weight:700;color:var(--text);">€2.450</div><span class="badge gebeld" style="font-size:10px;padding:2px 7px;">Openstaand</span></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:8px;">
+                <div><div style="font-size:13px;font-weight:600;color:var(--text);">H. van den Berg</div><div style="font-size:11.5px;color:var(--text-muted);">Factuur #2025-038</div></div>
+                <div style="text-align:right;"><div style="font-size:13px;font-weight:700;color:var(--text);">€6.750</div><span class="badge akkoord" style="font-size:10px;padding:2px 7px;">Betaald</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE: REVIEWS
+    ============================================================ -->
+    <div class="page-content" id="page-reviews">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Reviews &amp; Reputatie</h2>
+          <p class="section-subtitle">Uw Google-beoordelingen op één plek</p>
+        </div>
+        <button class="btn btn-primary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Koppel Google Account
+        </button>
+      </div>
+
+      <div class="reviews-header-stat">
+        <div class="reviews-big-score">4.9</div>
+        <div class="reviews-score-detail">
+          <h3>Uitstekende reputatie</h3>
+          <div class="stars-row">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+          </div>
+          <div class="reviews-count">Gebaseerd op 87 Google-beoordelingen</div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="stat-change up" style="font-size:11px;">▲ +4 deze maand</span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.4);">Top 5% dakdekkers regio Noord-Holland</span>
+          </div>
+        </div>
+        <div style="text-align:right;position:relative;z-index:1;">
+          <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:8px;">Score verdeling</div>
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+            <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;color:rgba(255,255,255,0.4);">5★</span><div style="width:80px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;"><div style="width:89%;height:100%;background:var(--orange);border-radius:3px;"></div></div><span style="font-size:11px;color:rgba(255,255,255,0.5);">78</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;color:rgba(255,255,255,0.4);">4★</span><div style="width:80px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;"><div style="width:8%;height:100%;background:var(--orange);border-radius:3px;opacity:0.6;"></div></div><span style="font-size:11px;color:rgba(255,255,255,0.5);">7</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;color:rgba(255,255,255,0.4);">3★</span><div style="width:80px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;"><div style="width:2%;height:100%;background:var(--orange);border-radius:3px;opacity:0.4;"></div></div><span style="font-size:11px;color:rgba(255,255,255,0.5);">2</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Uitstekend werk! Onze daklekkage werd snel en vakkundig opgelost. Rob en zijn team waren punctueel, netjes en deden precies wat ze beloofden. Echt een aanrader!"</p>
+          <div class="review-author">
+            <div class="review-avatar" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8);">MV</div>
+            <div>
+              <div class="review-name">Marco Visser</div>
+              <div class="review-platform"><span class="google-dot"></span> Google · 2 dagen geleden</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Fantastische service van begin tot eind. Het gevelwerk ziet er prachtig uit en de prijs was zeer redelijk. Zeker voor herhaling vatbaar. Bedankt Veenstra!"</p>
+          <div class="review-author">
+            <div class="review-avatar" style="background:linear-gradient(135deg,#10B981,#059669);">IK</div>
+            <div>
+              <div class="review-name">Ingrid Kok</div>
+              <div class="review-platform"><span class="google-dot"></span> Google · 1 week geleden</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Na jaren problemen met ons platte dak hebben we eindelijk een duurzame oplossing gevonden. Het team van Veenstra werkte snel en professioneel. Zeer tevreden!"</p>
+          <div class="review-author">
+            <div class="review-avatar" style="background:linear-gradient(135deg,var(--orange),var(--orange-dark));">PH</div>
+            <div>
+              <div class="review-name">Peter Hofman</div>
+              <div class="review-platform"><span class="google-dot"></span> Google · 2 weken geleden</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Al de tweede keer dat ik Veenstra inschakelen. Weer prima werk geleverd! Het lood- en zinkwerk is perfect afgewerkt. Betrouwbaar bedrijf dat altijd afspraken nakomt."</p>
+          <div class="review-author">
+            <div class="review-avatar" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED);">EM</div>
+            <div>
+              <div class="review-name">Els Mulder</div>
+              <div class="review-platform"><span class="google-dot"></span> Google · 3 weken geleden</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Vogeloverlast probleem volledig opgelost dankzij Veenstra. Ze gaven goed advies, de montage was netjes en de prijs was eerlijk. Zou ze aan iedereen aanbevelen!"</p>
+          <div class="review-author">
+            <div class="review-avatar" style="background:linear-gradient(135deg,var(--navy),var(--navy-deep));">WB</div>
+            <div>
+              <div class="review-name">Wim Brouwer</div>
+              <div class="review-platform"><span class="google-dot"></span> Google · 1 maand geleden</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★☆</div>
+          <p class="review-text">"Goede communicatie en netjes werk aan de dakgoten. Iets later begonnen dan gepland, maar de kwaliteit van het eindresultaat maakt dat volledig goed. Tevreden klant!"</p>
+          <div class="review-author">
+            <div class="review-avatar" style="background:linear-gradient(135deg,#EF4444,#DC2626);">AT</div>
+            <div>
+              <div class="review-name">Anja Timmermans</div>
+              <div class="review-platform"><span class="google-dot"></span> Google · 1 maand geleden</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE: INSTELLINGEN
+    ============================================================ -->
+    <div class="page-content" id="page-instellingen">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Instellingen</h2>
+          <p class="section-subtitle">Beheer uw account- en bedrijfsinstellingen</p>
+        </div>
+        <button class="btn btn-primary">Wijzigingen opslaan</button>
+      </div>
+
+      <div class="settings-grid">
+        <!-- Settings nav -->
+        <div class="card settings-nav" style="padding:14px;height:fit-content;">
+          <div class="s-nav-item active">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Bedrijfsprofiel
+          </div>
+          <div class="s-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Gebruikers
+          </div>
+          <div class="s-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Facturering
+          </div>
+          <div class="s-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Meldingen
+          </div>
+          <div class="s-nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Beveiliging
+          </div>
+        </div>
+
+        <!-- Settings form -->
+        <div class="card settings-form" style="padding:28px;">
+          <div class="form-section">
+            <div class="form-section-title">Bedrijfsgegevens</div>
+            <div class="s-form-row">
+              <div class="s-form-group">
+                <label class="s-form-label">Bedrijfsnaam</label>
+                <input type="text" class="s-form-input" value="Veenstra Totaalonderhoud">
+              </div>
+              <div class="s-form-group">
+                <label class="s-form-label">KVK-nummer</label>
+                <input type="text" class="s-form-input" value="85291473">
+              </div>
+            </div>
+            <div class="s-form-row">
+              <div class="s-form-group">
+                <label class="s-form-label">Telefoonnummer</label>
+                <input type="tel" class="s-form-input" value="+31 6 17835171">
+              </div>
+              <div class="s-form-group">
+                <label class="s-form-label">E-mailadres</label>
+                <input type="email" class="s-form-input" value="info@veenstratotaalonderhoud.nl">
+              </div>
+            </div>
+            <div class="s-form-group">
+              <label class="s-form-label">Adres</label>
+              <input type="text" class="s-form-input" value="Industrieweg 24, 1432 BK Aalsmeer">
+            </div>
+            <div class="s-form-group">
+              <label class="s-form-label">Website</label>
+              <input type="url" class="s-form-input" value="https://www.veenstratotaalonderhoud.nl">
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">Meldingsinstellingen</div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Nieuwe leads via e-mail</div>
+                <div class="toggle-desc">Ontvang direct een e-mail bij elke nieuwe lead</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Betalingsbevestigingen</div>
+                <div class="toggle-desc">Meldingen ontvangen bij binnenkomende betalingen</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Agenda herinneringen</div>
+                <div class="toggle-desc">24 uur van tevoren herinnerd aan geplande klussen</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Nieuwe Google reviews</div>
+                <div class="toggle-desc">Melding bij elke nieuwe beoordeling op Google</div>
+              </div>
+              <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:8px;">
+            <button class="btn btn-secondary">Annuleren</button>
+            <button class="btn btn-primary">Wijzigingen opslaan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MOBILE NAV -->
+  <nav class="mobile-nav">
+    <div class="mobile-nav-item active" onclick="showPage('dashboard', this, true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+    <div class="mobile-nav-item" onclick="showPage('leads', this, true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Leads
+    </div>
+    <div class="mobile-nav-item" onclick="showPage('planning', this, true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Planning
+    </div>
+    <div class="mobile-nav-item" onclick="showPage('financieel', this, true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Financieel
+    </div>
+    <div class="mobile-nav-item" onclick="showPage('instellingen', this, true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Instellingen
+    </div>
+  </nav>
+
+  <!-- FAB -->
+  <button class="fab" onclick="showPage('leads', document.querySelector('.nav-item:nth-child(2)'))">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+
+</div>
+
+<script>
+  // ===== LOGIN =====
+  function doLogin() {
+    const screen = document.getElementById('loginScreen');
+    const app = document.getElementById('dashboardApp');
+    screen.classList.add('hidden');
+    app.style.display = 'flex';
+    setTimeout(() => {
+      app.classList.add('visible');
+      animateBars();
+      animateProgressBars();
+    }, 100);
+  }
+
+  // ===== PAGE NAVIGATION =====
+  const pageMeta = {
+    dashboard:    { title: 'Dashboard', breadcrumb: 'Overzicht' },
+    leads:        { title: 'Leads & Offertes', breadcrumb: 'Leads' },
+    planning:     { title: 'Planning & Agenda', breadcrumb: 'Planning' },
+    klanten:      { title: 'Klantbeheer', breadcrumb: 'Klanten' },
+    financieel:   { title: 'Financieel', breadcrumb: 'Financieel' },
+    reviews:      { title: 'Reviews', breadcrumb: 'Reviews' },
+    instellingen: { title: 'Instellingen', breadcrumb: 'Instellingen' }
+  };
+
+  function showPage(pageId, clickedEl, fromMobile) {
+    // Hide all pages
+    document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+    // Show target
+    const page = document.getElementById('page-' + pageId);
+    if (page) page.classList.add('active');
+
+    // Update topbar
+    const meta = pageMeta[pageId] || { title: pageId, breadcrumb: pageId };
+    document.getElementById('pageTitle').textContent = meta.title;
+    document.getElementById('pageBreadcrumb').textContent = meta.breadcrumb;
+
+    // Update sidebar active
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (clickedEl && !fromMobile) clickedEl.classList.add('active');
+
+    // Update mobile nav active
+    document.querySelectorAll('.mobile-nav-item').forEach(n => n.classList.remove('active'));
+    if (fromMobile && clickedEl) clickedEl.classList.add('active');
+
+    // Map mobile click to sidebar highlight too
+    const navItems = document.querySelectorAll('.nav-item');
+    const pageOrder = ['dashboard','leads','planning','klanten','financieel','reviews','instellingen'];
+    const idx = pageOrder.indexOf(pageId);
+    if (idx >= 0 && navItems[idx]) navItems[idx].classList.add('active');
+
+    // Close mobile sidebar
+    closeSidebar();
+
+    // Animate charts when visiting financieel
+    if (pageId === 'financieel') {
+      setTimeout(() => {
+        animateBars();
+        animateProgressBars();
+      }, 200);
+    }
+
+    // Close notif panel
+    document.getElementById('notifPanel').classList.remove('open');
+  }
+
+  // ===== SIDEBAR MOBILE =====
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const ov = document.getElementById('sidebarOverlay');
+    sb.classList.toggle('open');
+    ov.classList.toggle('show');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+  }
+
+  // ===== NOTIFICATIONS =====
+  function toggleNotif() {
+    document.getElementById('notifPanel').classList.toggle('open');
+  }
+  function markAllRead() {
+    document.querySelectorAll('.notif-item.unread').forEach(n => n.classList.remove('unread'));
+    document.querySelectorAll('.notif-dot').forEach(d => d.remove());
+    const badge = document.querySelector('.icon-btn .badge');
+    if (badge) badge.textContent = '0';
+  }
+  document.addEventListener('click', function(e) {
+    const panel = document.getElementById('notifPanel');
+    if (!panel.contains(e.target) && !e.target.closest('.icon-btn')) {
+      panel.classList.remove('open');
+    }
+  });
+
+  // ===== TABLE SEARCH =====
+  function filterTable(query) {
+    const q = query.toLowerCase();
+    document.querySelectorAll('#leadsTable tbody tr').forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  // ===== STATUS FILTER =====
+  function filterByStatus(status, btn) {
+    // visual active
+    const allBtns = btn.parentElement.querySelectorAll('.btn');
+    allBtns.forEach(b => {
+      b.style.outline = 'none';
+      b.style.boxShadow = 'none';
+    });
+    btn.style.outline = '2px solid var(--orange)';
+  }
+
+  // ===== BAR CHART ANIMATION =====
+  function animateBars() {
+    const bars = document.querySelectorAll('.bar');
+    bars.forEach((bar, i) => {
+      bar.style.animation = 'none';
+      bar.style.transform = 'scaleY(0)';
+      setTimeout(() => {
+        bar.style.animation = '';
+        bar.style.animationDelay = (i * 0.08) + 's';
+        bar.classList.add('animated');
+        bar.style.transform = '';
+      }, 50);
+    });
+  }
+
+  function animateProgressBars() {
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach((pb, i) => {
+      const targetW = getComputedStyle(pb).getPropertyValue('--target-w').trim();
+      pb.style.width = '0';
+      setTimeout(() => {
+        pb.style.transition = `width ${1.2 + i * 0.2}s cubic-bezier(0.4, 0, 0.2, 1)`;
+        pb.style.width = targetW;
+      }, 100 + i * 100);
+    });
+  }
+
+  // Trigger bar animation when finance section scrolled into view
+  const chartObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateBars();
+        animateProgressBars();
+      }
+    });
+  }, { threshold: 0.2 });
+  const chartCard = document.getElementById('chartCard');
+  if (chartCard) chartObs.observe(chartCard);
+
+  // ===== INIT =====
+  // Show dashboard app hidden initially, login screen on top
+  document.getElementById('dashboardApp').style.display = 'none';
+</script>
+</body>
+</html>

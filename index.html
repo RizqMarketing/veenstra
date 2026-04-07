@@ -123,7 +123,8 @@ img{max-width:100%;display:block}a{text-decoration:none;color:inherit}
 
 /* Nav slides down */
 .nav{opacity:0;transform:translateY(-30px);transition:opacity .7s var(--ease),transform .7s var(--ease),background .5s var(--ease),padding .5s var(--ease),box-shadow .5s var(--ease)}
-.nav.entered{opacity:1;transform:none}
+.nav.entered{opacity:1;transform:translateY(0)}
+.nav.scrolled{transform:translateY(0)}
 
 /* Aurora orbs expand from nothing with stagger */
 .hero-aurora .orb{opacity:0;transform:scale(0);transition:opacity 1.6s ease,transform 1.8s var(--ease)}
@@ -259,11 +260,11 @@ img{max-width:100%;display:block}a{text-decoration:none;color:inherit}
 .srv-card h3{font-family:'Outfit';font-size:13px;font-weight:600;color:#fff;line-height:1.25;letter-spacing:-.1px}
 
 /* ===== SHOWCASE NUMBERS ===== */
-.showcase{padding:60px 24px;background:var(--navy-deep);position:relative;overflow:hidden}
+.showcase{padding:60px 0;background:var(--navy-deep);position:relative;overflow:hidden}
 .showcase::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 50% 50%,rgba(245,166,35,.06),transparent 70%);pointer-events:none}
-.showcase-grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative;z-index:2}
+.showcase-grid{max-width:700px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative;z-index:2}
 
-.show-item{text-align:center;padding:32px 16px;position:relative}
+.show-item{text-align:center;padding:32px 20px;position:relative}
 .show-item:not(:last-child){border-right:1px solid rgba(255,255,255,.06)}
 
 .show-ico{width:44px;height:44px;margin:0 auto 14px;border-radius:14px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.1);display:flex;align-items:center;justify-content:center}
@@ -492,55 +493,66 @@ img{max-width:100%;display:block}a{text-decoration:none;color:inherit}
 .footer-legal a:hover{color:var(--orange)}
 
 /* ===== POPUP FORM — Premium ===== */
-.modal-overlay{position:fixed;inset:0;background:rgba(10,15,30,.75);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:2000;display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility .4s}
+.modal-overlay{position:fixed;inset:0;background:rgba(10,15,30,.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:2000;display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility .4s}
 .modal-overlay.open{opacity:1;visibility:visible}
 
-.modal{background:var(--white);border-radius:var(--r-xl) var(--r-xl) 0 0;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;padding:0;transform:translateY(100%);transition:transform .5s var(--ease);position:relative}
+.modal{background:var(--white);border-radius:var(--r-xl) var(--r-xl) 0 0;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;padding:0;transform:translateY(100%);transition:transform .55s var(--ease);position:relative;box-shadow:0 -20px 60px rgba(0,0,0,.2)}
 .modal-overlay.open .modal{transform:none}
 
-/* Decorative top bar */
-.modal-topbar{height:5px;background:linear-gradient(90deg,var(--orange),var(--navy-light),var(--orange));border-radius:var(--r-xl) var(--r-xl) 0 0}
+/* Dark premium header */
+.modal-header{position:relative;padding:36px 28px 28px;background:var(--navy-deep);overflow:hidden}
+.modal-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 70% 30%,rgba(245,166,35,.1),transparent 60%);pointer-events:none}
+.modal-header::after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.025) 1px,transparent 1px);background-size:20px 20px;pointer-events:none}
 
-.modal-header{position:relative;padding:32px 28px 0;background:linear-gradient(180deg,rgba(245,166,35,.04) 0%,transparent 100%)}
-.modal-close{position:absolute;top:20px;right:20px;width:38px;height:38px;border-radius:12px;border:1px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s var(--ease);z-index:3}
-.modal-close:hover{background:var(--off-white);border-color:rgba(245,166,35,.2);transform:rotate(90deg)}
-.modal-close svg{width:14px;height:14px;stroke:var(--text-s);stroke-width:2;fill:none}
+.modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s var(--ease);z-index:3}
+.modal-close:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:rotate(90deg)}
+.modal-close svg{width:13px;height:13px;stroke:rgba(255,255,255,.5);stroke-width:2;fill:none}
 
-.modal-icon{width:56px;height:56px;border-radius:18px;background:var(--navy-deep);display:flex;align-items:center;justify-content:center;margin-bottom:20px;box-shadow:0 8px 24px rgba(27,59,107,.15)}
-.modal-icon svg{width:26px;height:26px}
+.modal-head-top{display:flex;align-items:center;gap:14px;margin-bottom:16px;position:relative;z-index:2}
+.modal-icon{width:48px;height:48px;border-radius:14px;background:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 20px var(--orange-glow)}
+.modal-icon svg{width:22px;height:22px}
+.modal-head-top h2{font-family:'Outfit';font-size:22px;color:#fff;letter-spacing:-.6px;line-height:1.2}
 
-.modal h2{font-family:'Outfit';font-size:24px;color:var(--navy-deep);letter-spacing:-.8px;margin-bottom:6px}
-.modal .modal-sub{font-size:14px;color:var(--text-s);line-height:1.6;margin-bottom:0}
+.modal-sub{font-size:13px;color:rgba(255,255,255,.4);line-height:1.6;position:relative;z-index:2}
 
-.modal-body{padding:24px 28px 32px}
+.modal-stats{display:flex;gap:20px;margin-top:18px;position:relative;z-index:2}
+.modal-stat{display:flex;align-items:center;gap:6px}
+.modal-stat svg{width:14px;height:14px;flex-shrink:0}
+.modal-stat span{font-size:11px;color:rgba(255,255,255,.45);font-family:'Outfit';font-weight:500}
+
+/* Form body */
+.modal-body{padding:28px 28px 32px}
 
 .form-group{margin-bottom:16px}
 .form-group label{display:flex;align-items:center;gap:4px;font-family:'Outfit';font-weight:600;font-size:12px;color:var(--navy);margin-bottom:7px;letter-spacing:.3px}
-.form-group label .req{color:var(--orange);font-size:14px}
+.form-group label .req{color:var(--orange);font-size:13px;line-height:1}
 
-.form-group input,.form-group textarea,.form-group select{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:14px;font-family:'DM Sans';font-size:14px;color:var(--text);background:var(--white);transition:all .25s var(--ease);outline:none;-webkit-appearance:none}
+.form-input-wrap{position:relative}
+.form-input-wrap .form-ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;pointer-events:none;opacity:.3;z-index:1}
+.form-input-wrap input{padding-left:42px!important}
+
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:12px;font-family:'DM Sans';font-size:14px;color:var(--text);background:var(--off-white);transition:all .25s var(--ease);outline:none;-webkit-appearance:none}
 .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--orange);box-shadow:0 0 0 4px var(--orange-glow);background:var(--white)}
 .form-group input::placeholder,.form-group textarea::placeholder{color:var(--text-m)}
 .form-group textarea{resize:vertical;min-height:80px}
+.form-group select{color:var(--text-s)}
 
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
-.form-submit{width:100%;padding:16px;background:var(--orange);color:#fff;font-family:'Outfit';font-weight:700;font-size:16px;border:none;border-radius:50px;cursor:pointer;transition:all .35s var(--ease);box-shadow:0 8px 28px var(--orange-glow);margin-top:6px;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden}
+.form-submit{width:100%;padding:15px;background:var(--orange);color:#fff;font-family:'Outfit';font-weight:700;font-size:15px;border:none;border-radius:50px;cursor:pointer;transition:all .35s var(--ease);box-shadow:0 8px 28px var(--orange-glow);margin-top:8px;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden}
 .form-submit::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transition:left .6s}
 .form-submit:hover::before{left:120%}
 .form-submit:hover{transform:translateY(-2px);box-shadow:0 14px 40px var(--orange-glow-s)}
-.form-submit svg{width:18px;height:18px;transition:transform .3s var(--ease)}
+.form-submit svg{width:16px;height:16px;transition:transform .3s var(--ease)}
 .form-submit:hover svg{transform:translateX(4px)}
 
-.form-trust{display:flex;align-items:center;gap:20px;margin-top:18px;justify-content:center;flex-wrap:wrap}
-.form-trust-item{display:flex;align-items:center;gap:5px}
-.form-trust-item svg{width:14px;height:14px;flex-shrink:0}
-.form-trust-item span{font-size:11px;color:var(--text-m);font-family:'Outfit';font-weight:500;white-space:nowrap}
+.form-footer{text-align:center;margin-top:16px}
+.form-footer span{font-size:11px;color:var(--text-m);line-height:1.5}
 
 @media(min-width:500px){
   .modal-overlay{align-items:center}
-  .modal{border-radius:var(--r-xl);transform:translateY(40px) scale(.95)}
-  .modal-topbar{border-radius:var(--r-xl) var(--r-xl) 0 0}
+  .modal{border-radius:var(--r-xl);transform:translateY(30px) scale(.96);box-shadow:0 30px 80px rgba(0,0,0,.3)}
+  .modal-header{border-radius:var(--r-xl) var(--r-xl) 0 0}
   .modal-overlay.open .modal{transform:none}
 }
 
@@ -1053,25 +1065,62 @@ img{max-width:100%;display:block}a{text-decoration:none;color:inherit}
 <!-- POPUP FORM -->
 <div class="modal-overlay" id="formModal">
   <div class="modal">
-    <div class="modal-topbar"></div>
     <div class="modal-header">
       <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 14 14"><path d="M3 3l8 8M11 3l-8 8" stroke-linecap="round"/></svg></button>
-      <div class="modal-icon">
-        <svg viewBox="0 0 26 26" fill="none">
-          <path d="M20 4H6a2 2 0 00-2 2v14l4-3h12a2 2 0 002-2V6a2 2 0 00-2-2z" stroke="#F5A623" stroke-width="1.5"/>
-          <path d="M9 10h8M9 13h5" stroke="rgba(255,255,255,.6)" stroke-width="1.3" stroke-linecap="round"/>
-        </svg>
+
+      <div class="modal-head-top">
+        <div class="modal-icon">
+          <svg viewBox="0 0 22 22" fill="none">
+            <path d="M16 3H6a2 2 0 00-2 2v12l3.5-2.5H16a2 2 0 002-2V5a2 2 0 00-2-2z" stroke="#fff" stroke-width="1.5"/>
+            <path d="M8 8h6M8 11h4" stroke="rgba(255,255,255,.5)" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h2>Gratis Offerte<br>Aanvragen</h2>
       </div>
-      <h2>Gratis Offerte Aanvragen</h2>
-      <p class="modal-sub">Vul uw gegevens in en wij nemen binnen 24 uur contact met u op.</p>
+
+      <p class="modal-sub">Vul uw gegevens in en wij nemen binnen 24 uur contact met u op. Geheel vrijblijvend.</p>
+
+      <div class="modal-stats">
+        <div class="modal-stat">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5v4c0 3.5 2.1 6.6 5 7.5 2.9-.9 5-4 5-7.5v-4L7 1z" stroke="#F5A623" stroke-width="1.1"/><path d="M5 7.5l1.5 1.5L9.5 5.5" stroke="#F5A623" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>24 uur reactie</span>
+        </div>
+        <div class="modal-stat">
+          <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#F5A623" stroke-width="1.1"/><path d="M5 7l1.5 1.5L9 5.5" stroke="#F5A623" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>100% vrijblijvend</span>
+        </div>
+        <div class="modal-stat">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M7 1l1.76 3.57L13 5.29 9.5 8.71l.83 4.84L7 11.47l-3.33 2.08.83-4.84L1 5.29l4.24-.72L7 1z" stroke="#F5A623" stroke-width="1.1" stroke-linejoin="round"/></svg>
+          <span>Gratis inspectie</span>
+        </div>
+      </div>
     </div>
+
     <div class="modal-body">
       <form onsubmit="return false">
         <div class="form-row">
-          <div class="form-group"><label>Naam <span class="req">*</span></label><input type="text" placeholder="Uw volledige naam" required></div>
-          <div class="form-group"><label>Telefoon <span class="req">*</span></label><input type="tel" placeholder="+31 6 ..." required></div>
+          <div class="form-group">
+            <label>Naam <span class="req">*</span></label>
+            <div class="form-input-wrap">
+              <svg class="form-ico" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M2 15c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              <input type="text" placeholder="Uw volledige naam" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Telefoon <span class="req">*</span></label>
+            <div class="form-input-wrap">
+              <svg class="form-ico" viewBox="0 0 16 16" fill="none"><path d="M6.6 9.4c1 1.8 2.6 3.4 4.4 4.4l1.4-1.4c.2-.2.4-.2.6-.1.7.2 1.4.4 2.2.4.3 0 .6.3.6.6v2c0 .3-.3.6-.6.6C7 16 0 9 0 .8 0 .5.3.2.6.2h2c.3 0 .6.3.6.6 0 .8.1 1.5.4 2.2.1.2 0 .4-.1.6L2 5" stroke="currentColor" stroke-width="1.2"/></svg>
+              <input type="tel" placeholder="+31 6 ..." required>
+            </div>
+          </div>
         </div>
-        <div class="form-group"><label>E-mailadres</label><input type="email" placeholder="uw@email.nl"></div>
+        <div class="form-group">
+          <label>E-mailadres</label>
+          <div class="form-input-wrap">
+            <svg class="form-ico" viewBox="0 0 16 16" fill="none"><rect x="1" y="3.5" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M1 5l7 4.5L15 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <input type="email" placeholder="uw@email.nl">
+          </div>
+        </div>
         <div class="form-group"><label>Type dakwerk</label>
           <select>
             <option value="">Selecteer een dienst...</option>
@@ -1095,20 +1144,7 @@ img{max-width:100%;display:block}a{text-decoration:none;color:inherit}
           Verstuur Aanvraag
           <svg viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <div class="form-trust">
-          <div class="form-trust-item">
-            <svg viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5v4c0 3.5 2.1 6.6 5 7.5 2.9-.9 5-4 5-7.5v-4L7 1z" stroke="#F5A623" stroke-width="1.2"/><path d="M5 7.5l1.5 1.5L9.5 5.5" stroke="#F5A623" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>Binnen 24 uur reactie</span>
-          </div>
-          <div class="form-trust-item">
-            <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#F5A623" stroke-width="1.2"/><path d="M5 7l1.5 1.5L9 5.5" stroke="#F5A623" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>100% vrijblijvend</span>
-          </div>
-          <div class="form-trust-item">
-            <svg viewBox="0 0 14 14" fill="none"><path d="M7 1l1.76 3.57L13 5.29 9.5 8.71l.83 4.84L7 11.47l-3.33 2.08.83-4.84L1 5.29l4.24-.72L7 1z" stroke="#F5A623" stroke-width="1.2" stroke-linejoin="round"/></svg>
-            <span>Gratis inspectie</span>
-          </div>
-        </div>
+        <div class="form-footer"><span>Uw gegevens zijn veilig en worden niet gedeeld met derden.</span></div>
       </form>
     </div>
   </div>
